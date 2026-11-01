@@ -116,7 +116,7 @@ Releases 页下载 `SoftwareManager.exe`，双击即用，免安装。
 ### 方式二：源码运行
 
 ```bash
-git clone https://github.com/<你的用户名>/software-backup-manager.git
+git clone https://github.com/22759/software-backup-manager.git
 cd software-backup-manager
 
 pip install -r requirements.txt

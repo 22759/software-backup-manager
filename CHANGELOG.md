@@ -39,5 +39,5 @@
 - 前端保存设置整体覆盖后端，窗口位置被清空
 - 卡片长 ID 把安装日期挤出可视区
 
-[未发布]: https://github.com/<你的用户名>/software-backup-manager/compare/v1.0.0...HEAD
-[1.0.0]: https://github.com/<你的用户名>/software-backup-manager/releases/tag/v1.0.0
+[未发布]: https://github.com/22759/software-backup-manager/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/22759/software-backup-manager/releases/tag/v1.0.0
