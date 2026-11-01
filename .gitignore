@@ -18,6 +18,7 @@ dist/
 *.manifest
 *.exe
 !icon.ico
+*.sha256
 
 # —— Python ——
 __pycache__/
