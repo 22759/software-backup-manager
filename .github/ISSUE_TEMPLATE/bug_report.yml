@@ -1,0 +1,44 @@
+---
+name: Bug 反馈
+description: 报告一个软件备份管理器的问题
+labels: bug
+body:
+  - type: textarea
+    id: desc
+    attributes:
+      label: 问题描述
+      description: 发生了什么，怎么复现
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 打开软件备份管理器
+        2. 点击「导出重装脚本」
+        3. 出现报错
+    validations:
+      required: true
+  - type: textarea
+    id: log
+    attributes:
+      label: 日志输出
+      description: 程序右下角「📋 日志」里的内容，粘贴到这里
+      render: shell
+  - type: input
+    id: version
+    attributes:
+      label: 版本 / 环境
+      placeholder: Windows 11 23H2，pywebview 6.2.1，Python 3.14
+    validations:
+      required: true
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: 确认事项
+      options:
+        - label: 我已删除 `settings.json` 后问题依然存在
+          required: false
+        - label: 这是 UI 显示问题，与安装无关
+          required: false

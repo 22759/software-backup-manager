@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>软件备份管理器</title>
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- 动态背景光斑 + 自定义背景图 -->
+  <div class="bg">
+    <div class="bg-img" id="bgImg"></div>
+    <span class="blob b1"></span>
+    <span class="blob b2"></span>
+    <span class="blob b3"></span>
+    <span class="blob b4"></span>
+  </div>
+
+  <div class="window glass">
+    <!-- 标题栏（拖拽区） -->
+    <header class="titlebar" id="titlebar">
+      <div class="brand">
+        <span class="logo">📦</span>
+        <span class="title">软件备份管理器</span>
+        <span class="sub">读取 · 勾选 · 下载官网安装包 · 一键重装</span>
+      </div>
+      <div class="win-btns">
+        <button class="wbtn gear" id="btnGear" title="外观设置" aria-label="外观设置">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+               stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="8.4"/>
+            <path d="M12 3.6a8.4 8.4 0 0 0 0 16.8z" fill="currentColor" stroke="none"/>
+            <path d="M12 3.6v16.8"/>
+          </svg>
+        </button>
+        <button class="wbtn min" id="btnMin" title="最小化">—</button>
+        <button class="wbtn max" id="btnMax" title="最大化 / 还原" aria-label="最大化">
+          <svg class="ico-max" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="4.5" y="4.5" width="15" height="15" rx="2"/>
+          </svg>
+          <svg class="ico-restore" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor"
+               stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3.5" y="8.5" width="12" height="12" rx="2"/>
+            <path d="M8.5 5.5v-1a1 1 0 0 1 1-1h11a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1h-1"/>
+          </svg>
+        </button>
+        <button class="wbtn close" id="btnClose" title="关闭">✕</button>
+      </div>
+    </header>
+
+    <!-- 管理员提示 -->
+    <div class="warnbar" id="warnbar" hidden>
+      ⚠ 当前未以管理员身份运行：部分软件（机器级安装）可能安装失败。
+      <button class="elevate-btn" id="btnElevate">🔓 以管理员身份运行（自动重启）</button>
+    </div>
+
+    <!-- 工具栏 -->
+    <section class="toolbar">
+      <div class="search-wrap">
+        <span class="search-ico">🔍</span>
+        <input id="search" type="text" placeholder="搜索应用名称或 ID…" autocomplete="off" />
+        <button class="clear" id="btnClear" title="清空">✕</button>
+      </div>
+      <div class="chip-group">
+        <button class="chip active" id="chipAll">全部</button>
+        <button class="chip" id="chipWinget">仅可自动下载</button>
+        <button class="chip" id="chipUpd">可更新</button>
+        <button class="chip ghost" id="btnSelAll">全选</button>
+        <button class="chip ghost" id="btnInvert">反选</button>
+        <button class="chip ghost" id="btnBatchLink" title="一次选择多个安装包，分别链接到对应软件">📦 批量链接</button>
+        <span class="spacer"></span>
+        <span class="sortlabel" title="列表排序方式">排序</span>
+        <select id="sortBy" class="sel-type" aria-label="排序方式">
+          <option value="name">名称 A→Z</option>
+          <option value="name_desc">名称 Z→A</option>
+          <option value="date_desc">安装时间 新→旧</option>
+          <option value="date_asc">安装时间 旧→新</option>
+          <option value="version_desc">版本 新→旧</option>
+          <option value="size_desc">包大小 大→小</option>
+        </select>
+        <span class="sortlabel" title="按安装时间范围快速筛选">安装时间</span>
+        <select id="dateRange" class="sel-type" aria-label="安装时间范围">
+          <option value="all">不限</option>
+          <option value="7">近 7 天</option>
+          <option value="30">近 30 天</option>
+          <option value="90">近 90 天</option>
+          <option value="180">近半年</option>
+          <option value="365">近一年</option>
+          <option value="older">一年以前</option>
+          <option value="has">有日期的</option>
+          <option value="unknown">未知日期</option>
+        </select>
+        <button class="chip ghost" id="btnOnlyBackup" title="只看已经下载过安装包的软件">📥 仅已备份</button>
+      </div>
+      <div class="paths">
+        <div class="path">
+          <span class="plabel" title="下载的官网安装包统一保存到这里">📥 安装包保存目录</span>
+          <input id="backupDir" type="text" spellcheck="false" aria-label="安装包保存目录" />
+          <button class="browse" data-target="backupDir">浏览</button>
+        </div>
+        <div class="path">
+          <span class="plabel" title="重装时每个软件会装到这个根目录下的独立子文件夹里">📂 重装安装根目录</span>
+          <input id="installDir" type="text" spellcheck="false" aria-label="重装安装根目录" />
+          <button class="browse" data-target="installDir">浏览</button>
+        </div>
+        <div class="path typepick">
+          <span class="plabel" title="同一个软件常常同时提供 exe / msi / zip 好几种安装器，这里决定优先下载哪一种（找不到就自动换下一种）">🧩 安装器格式</span>
+          <select id="instType" class="sel-type" aria-label="安装器格式">
+            <option value="auto">自动 · 优先 EXE</option>
+            <option value="msi">优先 MSI</option>
+            <option value="zip">优先 ZIP 免安装</option>
+            <option value="all">全部变体</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- 列表 -->
+    <section class="list" id="list">
+      <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>正在读取本机已安装应用…（首次可能较慢）</p>
+      </div>
+    </section>
+
+    <!-- 底部操作 -->
+    <footer class="statusbar">
+      <div class="progress-wrap" id="progressWrap" hidden>
+        <div class="progress-meta">
+          <span id="progressText">准备中…</span>
+          <span id="progressCount"></span>
+        </div>
+        <div class="progress-track"><div class="progress-bar" id="progressBar"></div></div>
+      </div>
+      <div class="actions">
+        <span class="sel-info" id="selInfo">已选 0 个</span>
+        <span class="spacer"></span>
+        <button class="btn primary" id="btnDownload">⬇ 下载所选安装包</button>
+        <button class="btn" id="btnExport">📜 导出重装脚本</button>
+        <button class="btn" id="btnExportList">📄 导出清单</button>
+        <button class="btn accent" id="btnInstall">⚡ 一键安装到本机</button>
+        <button class="btn ghost" id="btnGlobal">⚙ 总设置</button>
+        <button class="btn ghost" id="btnLog">📋 日志</button>
+      </div>
+    </footer>
+
+    <!-- 日志面板 -->
+    <div class="logpanel" id="logpanel" hidden>
+      <div class="log-head">
+        <span>运行日志</span>
+        <button class="log-close" id="btnLogClose">✕</button>
+      </div>
+      <pre id="log"></pre>
+    </div>
+
+    <!-- 窗口缩放手柄（无边框窗口没有系统的缩放热区，这里自己画八个方向） -->
+    <div class="rz" id="rzHandles" aria-hidden="true">
+      <i class="rz-n" data-dir="n"></i>
+      <i class="rz-s" data-dir="s"></i>
+      <i class="rz-w" data-dir="w"></i>
+      <i class="rz-e" data-dir="e"></i>
+      <i class="rz-nw" data-dir="nw"></i>
+      <i class="rz-ne" data-dir="ne"></i>
+      <i class="rz-sw" data-dir="sw"></i>
+      <i class="rz-se" data-dir="se"></i>
+    </div>
+
+    <!-- 外观设置面板 -->
+    <div class="appearance" id="appearance" hidden>
+      <div class="ap-head">
+        <span>🎨 外观设置</span>
+        <button class="ap-close" id="btnApClose">✕</button>
+      </div>
+      <div class="ap-body">
+        <div class="ap-sec">
+          <div class="ap-label">外观模式</div>
+          <div class="seg" id="modeSeg">
+            <button data-mode="light">☀️ 浅色</button>
+            <button data-mode="dark">🌙 深色</button>
+            <button data-mode="auto">🖥 跟随系统</button>
+          </div>
+          <div class="ap-hint" style="margin-top:8px">「跟随系统」会随 Windows 的深浅色设置自动切换。<span id="sysThemeTip"></span></div>
+        </div>
+        <div class="ap-divider"></div>
+        <div class="ap-sec">
+          <div class="ap-label">主题配色</div>
+          <div class="theme-row" id="themeRow"></div>
+        </div>
+        <div class="ap-divider"></div>
+        <div class="ap-sec">
+          <div class="ap-label">背景图片（自定义，可叠加在光斑之上）</div>
+          <div class="ap-btns">
+            <button class="btn ghost sm" id="btnPickImg">🖼 选择图片</button>
+            <button class="btn ghost sm" id="btnClearImg">清除图片</button>
+          </div>
+          <div class="ap-slider">
+            <span class="slabel">背景不透明度</span>
+            <input type="range" id="bgOpacity" min="0" max="100" value="100" />
+            <span class="sval" id="bgOpacityVal">100%</span>
+          </div>
+          <div class="ap-hint">提示：背景图会被玻璃层模糊处理，建议选一张不太花的图。</div>
+        </div>
+        <div class="ap-divider"></div>
+        <div class="ap-sec">
+          <div class="ap-label">界面通透度（毛玻璃浓淡，实时生效）</div>
+          <div class="ap-slider">
+            <span class="slabel">通透</span>
+            <input type="range" id="panelAlpha" min="30" max="100" value="100" />
+            <span class="sval" id="panelAlphaVal">100%</span>
+          </div>
+        </div>
+        <div class="ap-divider"></div>
+        <div class="ap-sec">
+          <label class="ap-toggle">
+            <input type="checkbox" id="deskTrans" />
+            <span>透出桌面（重启程序后生效）</span>
+          </label>
+          <div class="ap-hint">开启后窗口真正透明、可见桌面，毛玻璃会模糊桌面背景。需重新双击 run.bat 启动才生效。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 弹出小窗（安装参数 / 总设置），随鼠标定位，玻璃风格 -->
+  <div class="pop" id="pop" hidden></div>
+
+  <!-- 卡片右键菜单 -->
+  <div class="ctxmenu" id="ctxMenu" hidden></div>
+
+  <!-- 轻提示 -->
+  <div class="toast" id="toast" hidden></div>
+
+  <script src="app.js"></script>
+</body>
+</html>

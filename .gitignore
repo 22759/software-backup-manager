@@ -1,0 +1,55 @@
+# —— 用户本地数据（绝对不要提交）——
+settings.json
+install_links.json
+selection.json
+backup_index.json
+
+# —— 下载的安装包 / 备份产物 ——
+Backups/
+Install/
+*.exe.download
+重装全部.bat
+manifest.json
+
+# —— 打包产物（exe 走 Release 发布，不进仓库）——
+build/
+dist/
+*.spec
+*.manifest
+*.exe
+!icon.ico
+
+# —— Python ——
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.eggs/
+venv/
+.venv/
+env/
+ENV/
+
+# —— IDE / 编辑器 ——
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# —— 系统垃圾 ——
+Thumbs.db
+desktop.ini
+.DS_Store
+ehthumbs.db
+$RECYCLE.BIN/
+
+# —— 日志与临时文件 ——
+*.log
+*.tmp
+*.bak
+nul
+
+# —— 打包缓存 ——
+*.egg
+__pycache__
